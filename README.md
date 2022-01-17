@@ -12,7 +12,24 @@ The app is setup to listen to your keystrokes using a Focus node.
 we display the number of keystrokes we have recorded
 we display the set of keys pressed on last key event `event Keystrokes`
 
-## 1. Sticky `A key` Bug
+## Sticky any key Bug (web only. )
+
+you can get any alphanumeric key permanently stuck in "pressed" by simply pressing it with a cmd
+
+* Reproduce:
+  * hold `cmd`
+  * press `a`
+  * let go of `a`
+  * let go of `cmd`
+  * `a` is stuck now.
+  * the system knows a has been let go of
+    * the contently updating checker shows this.
+
+note: if you wait about 2 seconds before letting go of cmd, `a` does clear. but if you press cmd+a and let go in a natural way it does not.
+note: if you let go of cmd before a it clears as well.
+note: you can get more keys stuck this way by pressing more of them in combination with cmd and letting go of "the lot"
+
+## Sticky `key A` Bug (mac os only. )
 
 you can get any alphanumeric key permanently stuck in "pressed"
 
@@ -33,7 +50,7 @@ Expected behavior: both `event Keystrokes` should set back to empty on regaining
 
 Modification: rather than pressing `tab` above you can also use three fingers to swipe up on mac & select another window has the same behavior
 
-## 2. Sticky `CMD` `SHIFT`
+## Sticky `CMD` `SHIFT` (mac os & web)
 
 you can get `cmd` and `shift` stuck in pressed
 
@@ -49,7 +66,7 @@ you can get `cmd` and `shift` stuck in pressed
 Expected behaviour: the keystrokes should get set to empty.
 Note: if you let go of `cmd` & `shift` before `a` , the current keys get set to nothing
 
-## 3. Sticky `SHIFT` or `Control`
+## Sticky `SHIFT` or `Control` or `Alt` (mac os & web)
 
 * Reproduce:
   * hold `shift` or `control`
@@ -57,7 +74,7 @@ Note: if you let go of `cmd` & `shift` before `a` , the current keys get set to 
   * let go of all keys
   * the key is still recorded as pressed.
 
-## 4. Sticky `Meta`
+## Sticky `Meta` (mac os & web)
 
 * Reproduce:
   * hold `cmd`
