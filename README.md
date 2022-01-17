@@ -33,7 +33,9 @@ we display the set of keys pressed on a timer (constantly updating) `timer Keyst
 Expected behavior: both `event Keystrokes` and `timer Keystrokes` should set back to empty on regaining focus.
 (this does happen if you hold `cmd` and `a` and CLICK out into another window with your mouse cursor)
 
-Modification, rather than pressing `tab` above you can also use three fingers to swipe up on mac & select another window.
+Modification: rather than pressing `tab` above you can also use three fingers to swipe up on mac & select another window.
+
+Modification: pressing `cmd` and `shift` and just clicking out of hte window will get them both sticking too.
 
 ## Bug missing key events, probably incorrect use of FocusNode?
 
