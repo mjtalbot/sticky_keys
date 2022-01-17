@@ -36,8 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? timer;
   Set<LogicalKeyboardKey>? _pressedKeys;
   Set<LogicalKeyboardKey>? _pressedKeysFromTimer;
-  int keyEventCount = 0;
-  int clickEventCount = 0;
 
   @override
   void initState() {
@@ -54,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 
@@ -62,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // Whenever a press occurs, re-build.
     setState(() {
       _pressedKeys = RawKeyboard.instance.keysPressed;
-      keyEventCount += 1;
     });
     return KeyEventResult.handled;
   }
@@ -74,11 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           focus!.requestFocus();
-          setState(() {
-            clickEventCount++;
-          });
         },
         child: Focus(
           focusNode: focus,
@@ -88,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 const Text('Press a key!'),
                 const Text(''),
-                const Text('current keystrokes'),
+                const Text('current keystrokes (updated constantly)'),
                 if (_pressedKeysFromTimer != null)
                   ..._pressedKeysFromTimer!
                       .map(
@@ -107,9 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       )
                       .toList(growable: false),
-                const Text(''),
-                Text('We have recorded $keyEventCount key events.'),
-                Text('We have recorded $clickEventCount clicks.'),
               ],
             ),
           ),
