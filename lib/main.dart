@@ -36,17 +36,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   FocusNode? focus;
   Timer? timer;
-  Set<LogicalKeyboardKey>? _pressedKeys;
-  Set<LogicalKeyboardKey>? _pressedKeysFromTimer;
+  Set<LogicalKeyboardKey>? _pressedKeysByRaw;
+  Set<LogicalKeyboardKey>? _pressedKeysByKey;
+  Set<LogicalKeyboardKey>? _rawKeysKeysFromTimer;
+  Set<LogicalKeyboardKey>? _hardwareKeysFromTimer;
 
   @override
   void initState() {
-    focus = FocusNode(canRequestFocus: true, onKeyEvent: _onKeyEvent);
+    focus = FocusNode(
+        canRequestFocus: true, onKeyEvent: _onKeyEvent, onKey: _onKey);
     focus!.requestFocus();
 
     timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       setState(() {
-        _pressedKeysFromTimer = RawKeyboard.instance.keysPressed;
+        _rawKeysKeysFromTimer = RawKeyboard.instance.keysPressed;
+        _hardwareKeysFromTimer = HardwareKeyboard.instance.logicalKeysPressed;
       });
     });
     super.initState();
@@ -59,8 +63,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
     // Whenever a press occurs, re-build.
+    print('OnKeyEvent $event');
     setState(() {
-      _pressedKeys = RawKeyboard.instance.keysPressed;
+      _pressedKeysByKey = HardwareKeyboard.instance.logicalKeysPressed;
+    });
+    return KeyEventResult.handled;
+  }
+
+  KeyEventResult _onKey(FocusNode node, RawKeyEvent event) {
+    // Whenever a press occurs, re-build.
+    setState(() {
+      _pressedKeysByRaw = RawKeyboard.instance.keysPressed;
     });
     return KeyEventResult.handled;
   }
@@ -84,9 +97,10 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 const Text('Press a key!'),
                 const Text(''),
-                const Text('current keystrokes (updated constantly)'),
-                if (_pressedKeysFromTimer != null)
-                  ..._pressedKeysFromTimer!
+                const Text('Timed Checks:'),
+                const Text('HardwareKeyboard.instance.logicalKeysPressed:'),
+                if (_hardwareKeysFromTimer != null)
+                  ..._hardwareKeysFromTimer!
                       .map(
                         (key) => Text(
                           key.debugName ?? 'foo',
@@ -94,9 +108,31 @@ class _MyHomePageState extends State<MyHomePage> {
                       )
                       .toList(growable: false),
                 const Text(''),
-                const Text('keystrokes @ last onKeyEvent'),
-                if (_pressedKeys != null)
-                  ..._pressedKeys!
+                const Text('RawKeyboard.instance.keysPressed:'),
+                if (_rawKeysKeysFromTimer != null)
+                  ..._rawKeysKeysFromTimer!
+                      .map(
+                        (key) => Text(
+                          key.debugName ?? 'foo',
+                        ),
+                      )
+                      .toList(growable: false),
+                const Text(''),
+                const Text(''),
+                const Text('Evented Checks:'),
+                const Text('logicalKeysPressed @ _onKeyEvent'),
+                if (_pressedKeysByKey != null)
+                  ..._pressedKeysByKey!
+                      .map(
+                        (key) => Text(
+                          key.debugName ?? 'foo',
+                        ),
+                      )
+                      .toList(growable: false),
+                const Text(''),
+                const Text('keysPressed @ last _onKey:'),
+                if (_pressedKeysByRaw != null)
+                  ..._pressedKeysByRaw!
                       .map(
                         (key) => Text(
                           key.debugName ?? 'foo',

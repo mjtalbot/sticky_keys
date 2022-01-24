@@ -4,7 +4,8 @@ A new Flutter project to show a keyboard issue with Flutter.
 
 ## Getting Started
 
-To run run: `flutter run -d macos`
+To run run macos: `flutter run -d macos`
+To run run web: `flutter run -d chrome`
 
 ## Setup
 
@@ -12,72 +13,48 @@ The app is setup to listen to your keystrokes using a Focus node.
 we display the number of keystrokes we have recorded
 we display the set of keys pressed on last key event `event Keystrokes`
 
-## Sticky any key Bug (web only. )
+## 1 - macos - break onkey & onkeyevent
 
-you can get any alphanumeric key permanently stuck in "pressed" by simply pressing it with a cmd
+produces this error: 
+Another exception was thrown: A KeyUpEvent is dispatched, but the state shows that the physical key is pressed on a different logical key. If this occurs
+in real application, please report this bug to Flutter. If this occurs in unit tests, please ensure that simulated events follow Flutter's event model as
+documented in `HardwareKeyboard`. This was the event: KeyUpEvent#aa942(physicalKey: PhysicalKeyboardKey#70004(usbHidUsage: "0x00070004", debugName: "Key
+A"), logicalKey: LogicalKeyboardKey#70004(keyId: "0x1400070004", keyLabel: "", debugName: "Key with ID 0x01400070004"), character: null, timeStamp:
+5:24:44.700573) and the recorded logical key LogicalKeyboardKey#00061(keyId: "0x00000061", keyLabel: "A", debugName: "Key A")
 
-* Reproduce:
-  * hold `cmd`
-  * press `a`
-  * let go of `a`
-  * let go of `cmd`
-  * `a` is stuck now.
-  * the system knows a has been let go of
-    * the contently updating checker shows this.
+- open app
+- press a
+- three finger swipe up on mac touchpad to see window selection 
+- let go of a (this only happens with the a key)
+- select the flutter window with the sticky keys app
+- press a again and note the error log
 
-note: if you wait about 2 seconds before letting go of cmd, `a` does clear. but if you press cmd+a and let go in a natural way it does not.
-note: if you let go of cmd before a it clears as well.
-note: you can get more keys stuck this way by pressing more of them in combination with cmd and letting go of "the lot"
+## 2 - macos & web - sticky any alphanumeric key
+- open app
+- press key (e.g. g) or multiple alphanumeric keys
+- three finger swipe up on mac touchpad to see window selection 
+- let go of all keys
+- select the flutter window with the sticky keys app
+- the keys are now stuck, until you press those specific keys again. 
 
-## Sticky `key A` Bug (mac os only. )
+note: note for web, this is just on the rawkeyboard, maybe expected behaviour.
 
-you can get any alphanumeric key permanently stuck in "pressed"
+## 3 - macos & web - sticky meta/ control/ alt key (you can sticky multiple)
+- open app
+- press meta/ control/ alt
+- three finger swipe up on mac touchpad to see window selection 
+- let go of all keys
+- select SOME OTHER  window with the sticky keys app
+- three finger swipe & select the flutter
+- the keys are now stuck, until you press any button
 
-* Reproduce:
-  * hold `cmd`
-  * hold `a`
-  * press `tab` (tabbing to another widow. )
-    * both pressed `event Keystrokes`
-      * `Key A`
-      * `Meta Left`
-  * now refocus the flutter demo page app.
-    * both still show the same pressed keys.
-    * press another button `k`
-    * to clear `Key A`, press `a`
+## 4 - web - permanently sticky alphanumeric keys (for _onKey/ RawKeyboard.instance.keysPressed)
+- open app 
+- press any alpha numeric key (e.g. A)
+- press command
+- let go of alpha numeric key (e.g. A)
+- let go of command 
+- now the alpha numeric key is stuck until you press the key again. 
 
-Expected behavior: both `event Keystrokes` should set back to empty on regaining focus. and we should get an event for the clearing of those keys come through.
-(this does happen if you hold `cmd` and `a` and CLICK out into another window with your mouse cursor)
-
-Modification: rather than pressing `tab` above you can also use three fingers to swipe up on mac & select another window has the same behavior
-
-## Sticky `CMD` `SHIFT` (mac os & web)
-
-you can get `cmd` and `shift` stuck in pressed
-
-* Reproduce:
-  * hold `cmd` `shift` `a`
-  * click outside the window
-  * let go of `a`
-  * let go of `cmd`
-  * let go of `shift`
-  * refocus the flutter app.
-  * command and shift are stuck until you press any other button with the flutter window focussed.
-
-Expected behaviour: the keystrokes should get set to empty.
-Note: if you let go of `cmd` & `shift` before `a` , the current keys get set to nothing
-
-## Sticky `SHIFT` or `Control` or `Alt` (mac os & web)
-
-* Reproduce:
-  * hold `shift` or `control`
-  * click outside the flutter window.
-  * let go of all keys
-  * the key is still recorded as pressed.
-
-## Sticky `Meta` (mac os & web)
-
-* Reproduce:
-  * hold `cmd`
-  * press `tab` to focus a different window
-  * let go of all keys
-  * the `meta` is still recorded as pressed.
+note: this has to be done in one smooth motion, it's quite unnatural.
+note for web, this is just on the rawkeyboard, maybe expected behaviour.
